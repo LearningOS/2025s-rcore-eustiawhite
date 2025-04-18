@@ -45,6 +45,8 @@ pub struct TaskManagerInner {
     tasks: [TaskControlBlock; MAX_APP_NUM],
     /// id of current `Running` task
     current_task: usize,
+
+
 }
 
 lazy_static! {
@@ -135,6 +137,11 @@ impl TaskManager {
             panic!("All applications completed!");
         }
     }
+    fn get_current_task(&self) -> usize{
+        let inner=self.inner.exclusive_access();
+        let current=inner.current_task;
+        current
+    }
 }
 
 /// Run the first task in task list.
@@ -168,4 +175,9 @@ pub fn suspend_current_and_run_next() {
 pub fn exit_current_and_run_next() {
     mark_current_exited();
     run_next_task();
+}
+
+/// return its task_id返回当前的任务编号
+pub fn get_current_task()->usize{
+    TASK_MANAGER.get_current_task()
 }
